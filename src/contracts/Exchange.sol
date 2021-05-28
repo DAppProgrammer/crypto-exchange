@@ -25,11 +25,12 @@ contract Exchange {
     mapping(address => mapping(address => uint256)) public tokens;
     mapping(uint256 => _Order) public orders;
     uint256 public orderCount;
-
+    mapping(uint256 => bool) public orderCancelled;
     //Events
     event Deposit(address _token, address _user, uint256 _amount, uint256 _balance);
     event Withdraw(address _token, address _user, uint256 _amount, uint256 _balance);
     event Order(uint256 id, address user, address tokenGet, uint256 amountGet, address tokenGive, uint256 amountGive, uint256 timestamp);
+    event Cancel(uint256 id, address user, address tokenGet, uint256 amountGet, address tokenGive, uint256 amountGive, uint256 timestamp);
 
     //Structs
     struct _Order {
@@ -41,6 +42,7 @@ contract Exchange {
         uint256 amountGive;
         uint256 timestamp;
     }
+
 
     constructor(address _feeAccount, uint256 _feePercent) public {
         feeAccount = _feeAccount;
@@ -92,6 +94,14 @@ contract Exchange {
         orderCount = orderCount.add(1);
         orders[orderCount] = _Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
         emit Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
+    }
+
+    function cancelOrder(uint256 _id) public {
+        _Order storage _order = orders[_id];
+        require(_order.id == _id); //The order must exists
+        require(address(_order.user) == msg.sender);
+        orderCancelled[_id]=true;
+        emit Cancel(_order.id, msg.sender, _order.tokenGet, _order.amountGet, _order.tokenGive, _order.amountGive, now);
     }
 
 }
