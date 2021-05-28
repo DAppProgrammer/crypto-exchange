@@ -176,30 +176,28 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
 
   })
 
-  describe('withdrawing tokens',()=>{
+  describe("withdrawing tokens", () => {
     let result;
     let amount;
 
-    describe('success',()=>{
-      
-      beforeEach(async()=>{
+    describe("success", () => {
+      beforeEach(async () => {
         //Deposit tokens first
         amount = tokens(10);
-        await token.approve(exchange.address,amount,{from:user1});
+        await token.approve(exchange.address, amount, { from: user1 });
         await exchange.depositToken(token.address, amount, { from: user1 });
 
         //Withdraw tokens
         result = await exchange.withdrawToken(token.address, amount, {
           from: user1,
         });
-      })
+      });
 
-      it('withdraws token funts', async()=>{
+      it("withdraws token funts", async () => {
         const balance = await exchange.tokens(token.address, user1);
         balance.toString().should.equal("0");
-      })
+      });
 
-      
       it("emits a Withdraw event", async () => {
         const log = result.logs[0];
         log.event.should.equal("Withdraw");
@@ -211,39 +209,87 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
         event._amount
           .toString()
           .should.equal(amount.toString(), "value is correct");
-        event._balance
-          .toString()
-          .should.equal('0', "value is correct");
+        event._balance.toString().should.equal("0", "value is correct");
       });
-    })
+    });
 
-    describe('failure',()=>{
-      it('rejects ether withdraw',async()=>{
+    describe("failure", () => {
+      it("rejects ether withdraw", async () => {
         await exchange
           .withdrawToken(ETHER_ADDRESS, tokens(10), { from: user1 })
           .should.be.rejectedWith(EVM_REVERT);
-      })
-      it('rejects for insufficient balance',async()=>{
+      });
+      it("rejects for insufficient balance", async () => {
         await exchange
           .withdrawToken(token.address, tokens(10), {
             from: user1,
           })
           .should.be.rejectedWith(EVM_REVERT);
-      })
-    })
+      });
+    });
 
-    describe('checking balances',()=>{
-      beforeEach(async()=>{
+    describe("checking balances", () => {
+      beforeEach(async () => {
         exchange.depositEther({ from: user1, value: ether(1) });
-      })
+      });
 
-      it('returns user balance', async()=>{
+      it("returns user balance", async () => {
         const result = await exchange.balanceOf(ETHER_ADDRESS, user1);
         result.toString().should.equal(ether(1).toString());
-      })
-    })
-    
-  })
+      });
+    });
+  });
+
+  describe("making ordres", () => {
+    let result;
+
+    beforeEach(async() => {
+      result = await exchange.makeOrder(
+        token.address,
+        tokens(1),
+        ETHER_ADDRESS,
+        ether(1),
+        { from: user1 }
+      );
+    });
+
+    it("tracks the newly created order", async () => {
+      const orderCount = await exchange.orderCount();
+      orderCount.toString().should.equal("1");
+
+      const order = await exchange.orders("1");
+      order.id.toString().should.equal("1", "id is correct");
+      order.user.toString().should.equal(user1, "user is correct");
+      order.tokenGet
+        .toString()
+        .should.equal(token.address, "tokenGet is correct");
+      order.amountGet.toString().should.equal(tokens(1).toString(), "amountGet is correct");
+      order.tokenGive
+        .toString()
+        .should.equal(ETHER_ADDRESS, "tokenGive is correct");
+      order.amountGive.toString().should.equal(ether(1).toString(), "amountGive is correct");
+      order.timestamp.toString().length.should.be.at.least(1,'timestamp is present');
+    });
+
+    it("emits an Order event", async () => {
+      const log = result.logs[0];
+      log.event.should.equal("Order");
+      const event = log.args;
+      event.id
+        .toString()
+        .should.equal('1', "Order id is correct");
+      event.user.toString().should.equal(user1, "user is correct");
+      event.tokenGet
+        .toString()
+        .should.equal(token.address, "tokenGet is correct");
+      event.amountGet.toString().should.equal(tokens(1).toString(), "amountGet is correct");
+      event.tokenGive
+        .toString()
+        .should.equal(ETHER_ADDRESS, "tokenGet is correct");
+      event.amountGive.toString().should.equal(ether(1).toString(), "amountGive is correct");
+    });
+
+  });
 
   // describe('tracking balances after deposit',()=>{
   //   let ganacheEthBalanceBefore;
