@@ -57,6 +57,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2, rebalancer]) => {
    })
 
    it('emits a Deposit event', () => {
+     console.log(`Result: ${JSON.stringify(result)}`);
      const log = result.logs[0]
      log.event.should.eq('Deposit')
      const event = log.args
