@@ -1,33 +1,25 @@
 import React, { Component } from 'react';
 import './App.css';
-import Web3 from 'web3';
 import Token from "../abis/Token.json";
+import { loadWeb3 } from '../store/interactions';
+import { connect } from 'react-redux';
 
 class App extends Component {
   componentDidMount() {
-    this.loadBlockchainData();
+    this.loadBlockchainData(this.props.dispatch);
   }
 
-  async loadBlockchainData() {
+  async loadBlockchainData(dispatch) {
     // const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
-    const web3 = new Web3(window.ethereum)
+    const web3 = loadWeb3(dispatch)
     // const network = await web3.eth.net.getNetworkType();
     // const networks = Token.networks;
-    const accounts = await web3.eth.getAccounts();
+    // const accounts = await web3.eth.getAccounts();
     const networkId = await web3.eth.net.getId();
     const token = new web3.eth.Contract(Token.abi,Token.networks[networkId].address);
     const totalSupply = await token.methods.totalSupply().call();
     console.log(totalSupply);
   }
-
-  // async loadBlockchainData() {
-  //   const web3 = new Web3(window.ethereum)
-  //   const networkId = await web3.eth.net.getId()
-  //   const accounts = await web3.eth.getAccounts()
-  //   const token = new web3.eth.Contract(Token.abi, Token.networks[networkId].address)
-  //   const totalSupply = await token.methods.totalSupply().call()
-  //   console.log("totalSupply", totalSupply)
-  // }
 
   render() {
     return (
@@ -120,4 +112,10 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapStateToProps(state){
+  return {
+
+  }
+}
+
+export default connect(mapStateToProps)(App);
