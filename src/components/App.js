@@ -1,11 +1,19 @@
-import React  from 'react';
+import React, { useState }  from 'react';
+import { useSelector, useDispatch } from "react-redux";
 import './App.css';
 // import Web3 from 'web3';
 // import Token from "../abis/Token.json";
 
 const App =() =>  {
 
-  const loadBlockchainData = () => {
+  const dispatch = useDispatch();
+
+  const web3 = useSelector((state) => state.web3);
+  dispatch({ type: "WEB3_LOADED" });
+  console.log(web3);
+
+
+  //const loadBlockchainData = () => {
     // // const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
     // const web3 = new Web3(window.ethereum)
     // // const network = await web3.eth.net.getNetworkType();
@@ -15,7 +23,7 @@ const App =() =>  {
     // const token = new web3.eth.Contract(Token.abi,Token.networks[networkId].address);
     // const totalSupply = await token.methods.totalSupply().call();
     // console.log(totalSupply);
-  }
+  //}
 
     return (
       <div>
