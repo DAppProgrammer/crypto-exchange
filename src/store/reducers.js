@@ -3,7 +3,7 @@ import Web3 from 'web3';
 
 const initialState = {};
 
-const web3Reducer = (state = initialState, action) => {
+const rootReducer = (state = initialState, action) => {
   switch (action.type) {
     case "WEB3_LOADED":
       const web3 = new Web3(window.ethereum);
@@ -13,8 +13,8 @@ const web3Reducer = (state = initialState, action) => {
   }
 };
 
-const rootReducer = combineReducers({
-  web3Reducer,
-});
+// const rootReducer = combineReducers({
+//   web3Reducer,
+// });
 
 export default rootReducer;

@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useEffect, useState }  from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import './App.css';
 // import Web3 from 'web3';
@@ -7,10 +7,13 @@ import './App.css';
 const App =() =>  {
 
   const dispatch = useDispatch();
-
   const web3 = useSelector((state) => state.web3);
-  dispatch({ type: "WEB3_LOADED" });
-  console.log(web3);
+
+  useEffect(() => {
+    dispatch({ type: "WEB3_LOADED" });
+  }, [dispatch]);
+
+
 
 
   //const loadBlockchainData = () => {
