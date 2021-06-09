@@ -1,35 +1,22 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import './App.css';
-import Web3 from 'web3';
-import Token from "../abis/Token.json";
+// import Web3 from 'web3';
+// import Token from "../abis/Token.json";
 
-class App extends Component {
-  componentDidMount() {
-    this.loadBlockchainData();
+const App =() =>  {
+
+  const loadBlockchainData = () => {
+    // // const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
+    // const web3 = new Web3(window.ethereum)
+    // // const network = await web3.eth.net.getNetworkType();
+    // // const networks = Token.networks;
+    // const accounts = await web3.eth.getAccounts();
+    // const networkId = await web3.eth.net.getId();
+    // const token = new web3.eth.Contract(Token.abi,Token.networks[networkId].address);
+    // const totalSupply = await token.methods.totalSupply().call();
+    // console.log(totalSupply);
   }
 
-  async loadBlockchainData() {
-    // const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
-    const web3 = new Web3(window.ethereum)
-    // const network = await web3.eth.net.getNetworkType();
-    // const networks = Token.networks;
-    const accounts = await web3.eth.getAccounts();
-    const networkId = await web3.eth.net.getId();
-    const token = new web3.eth.Contract(Token.abi,Token.networks[networkId].address);
-    const totalSupply = await token.methods.totalSupply().call();
-    console.log(totalSupply);
-  }
-
-  // async loadBlockchainData() {
-  //   const web3 = new Web3(window.ethereum)
-  //   const networkId = await web3.eth.net.getId()
-  //   const accounts = await web3.eth.getAccounts()
-  //   const token = new web3.eth.Contract(Token.abi, Token.networks[networkId].address)
-  //   const totalSupply = await token.methods.totalSupply().call()
-  //   console.log("totalSupply", totalSupply)
-  // }
-
-  render() {
     return (
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -117,7 +104,6 @@ class App extends Component {
         </div>
       </div>
     );
-  }
 }
 
 export default App;
